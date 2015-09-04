@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+
+  <title></title>
+  <meta name="description" content="">
+  
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://leafletjs.com/dist/leaflet.js"></script>
+  
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <link rel="stylesheet" href="/osm-history/assets/css/main.css">
+  <link rel="canonical" href="/osm-history/users2.html">
+  <link rel="alternate" type="application/atom+xml" title="" href="/osm-history/feed.xml" />
+</head>
+
+
+<style>
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+		/*overides leaflet control layer order so it doesn't appear on top of nav bar*/
+		.leaflet-top, .leaflet-bottom {
+			z-index: 1;
+		}
+div.scroll {
+    background-color: white;
+    width: 700px;
+    height: 225px;
+    overflow: auto;
+}
+</style>
+
+
+  <body>
+<!--
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/osm-history/"></a>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+
+      <div class="wrapper">
+        Time Period:  -  <br />
+
+        Study Area:
+
+			</div>
+-->
+        <div id="map" style="width: 100%; height: 450px"></div>
+        <script src="/osm-history/assets/js/locator-map2.js"></script>       
+			<div class="wrapper">
+				<!--<h2>Summary Stats</h2>-->
+				<div id="user-counts">
+<!--					Nodes:<span></span><br/>
+					Ways:<span></span><br/>
+					Relations:<span></span><br/>
+					Changesets:<span></span>
+-->
+				</div>
+				<h2>Users</h2>
+<div class="scroll">
+				<ul id="users"></ul>
+        <script src="/osm-history/assets/js/userlist.js"></script>       
+    </div>
+  </div>
+<!--
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading"></h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li></li>
+          <li><a href="mailto:"></a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+        <p class="text"></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+-->
+  </body>
+
+</html>

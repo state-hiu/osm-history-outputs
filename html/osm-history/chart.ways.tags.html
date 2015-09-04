@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+/*
+#chart rect{
+  fill: #4aaeea;
+}
+*/
+
+#chart text{
+  fill: white;
+  font: 16px sans-serif;
+  text-anchor: end; 
+}
+
+.axis text{
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line{
+  fill: none;
+  stroke : #fff;
+  shape-rendering: crispEdges;
+}
+
+body{
+  background: #1a1a1a;
+  color : #eaeaea;
+  padding : 10px;
+}
+
+//responsive svg: http://stackoverflow.com/questions/16265123/resize-svg-when-window-is-resized-in-d3-js
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive {
+    display: inline-block;
+    position: absolute;
+    top: 20px;
+    left: 25px;
+}
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 80px;                  
+  height: 25px;                 
+  padding: 4px;             
+  font: 16px sans-serif;  
+  color: white;   
+  font-weight: 500;   
+  background: black;   
+  border: 0px;      
+  border-radius: 4px;           
+  pointer-events: none;         
+}
+</style>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<div id="chart"></div> 
+<script>
+
+var margin ={top:20, right:30, bottom:30, left:50},
+    width=700-margin.left - margin.right, 
+    height=500-margin.top-margin.bottom;
+
+// scale to ordinal because x axis is not numerical
+var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
+
+//scale to numerical value by height
+var y = d3.scale.linear().range([height, 0]);
+//var y = d3.scale.linear().range([0,700]);
+/*
+var chart = d3.select("#chart")  
+              .append("svg")  //append svg element inside #chart
+              .attr("width", width+(2*margin.left)+margin.right)    //set width
+              .attr("height", height+margin.top+margin.bottom);  //set height
+*/
+
+//responsive svg: http://stackoverflow.com/questions/16265123/resize-svg-when-window-is-resized-in-d3-js
+var chart = d3.select("#chart")
+   .classed("svg-container", true) //container class to make it responsive
+   .append("svg")
+   //responsive SVG needs these 2 attributes and no width and height attr
+   .attr("preserveAspectRatio", "xMinYMin meet")
+   //need to play around with last two viewBox values to find the right default
+   .attr("viewBox", "0 0 850 850")
+   //class to make it responsive
+   .classed("svg-content-responsive", true)
+   //.append("g")
+   //adds the margins to make enough room for axis, title, and labels
+   .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); 
+
+//had to mode tooltip code below var svg code to make sure it was above other elements
+var div = d3.select("#chart").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
+
+var xAxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom");  //orient bottom because x-axis will appear below the bars
+
+var yAxis = d3.svg.axis()
+              .scale(y)
+              .orient("left");
+
+d3.json("/osm-history/json/number_of_ways_per_tag.json", function(error, data){
+  x.domain(data.map(function(d){ return d.tag}));
+  y.domain([0, d3.max(data, function(d){return d.count})]);
+  
+  var bar = chart.selectAll("g")
+                    .data(data)
+                  .enter()
+                    .append("g")
+                    .attr("transform", function(d, i){
+                      return "translate("+x(d.tag)+", 0)";
+                    });
+  
+  bar.append("rect")
+      .attr("y", function(d) { 
+        return y(d.count); 
+      })
+      .attr("x", function(d,i){
+        return (margin.left);
+      })
+      .attr("height", function(d) { 
+        return height - y(d.count); 
+      })
+      .attr("width", x.rangeBand())  //set width base on range on ordinal data
+      .attr("fill", function(d) {
+        console.log(d.tag)
+        if (d.tag=="George Mason"){
+          return "#FEBF10";
+        } else {
+          return "#12618A";
+        }
+      });
+
+bar.selectAll("rect")
+			.on("mouseover", function(d) {		
+            div.transition()		
+               .duration(200)		
+               .style("opacity", .9);	
+            div.html("count: "+ d.count)	
+               .style("left", (d3.event.pageX - 15) + "px")
+      		     .style("top", (d3.event.pageY - 30) + "px");
+	          //selects the horizontal dashed line in the group
+		//	      d3.select(this.nextElementSibling).transition()		
+               // .duration(200)		
+               // .style("opacity", .9);
+            //selects the vertical dashed line in the group
+			     // d3.select(this.nextElementSibling.nextElementSibling).transition()		
+               // .duration(200)		
+               // .style("opacity", .9);	
+            })	
+				
+      .on("mouseout", function(d) {		
+            div.transition()		
+               .duration(500)		
+               .style("opacity", 0);
+
+		//	      d3.select(this.nextElementSibling).transition()		
+               // .duration(500)		
+               // .style("opacity", 0);
+
+		//	      d3.select(this.nextElementSibling.nextElementSibling).transition()		
+               // .duration(500)		
+               // .style("opacity", 0);	
+        });
+/*
+  bar.append("text")
+      .attr("x", x.rangeBand()/2+ margin.left )
+      .attr("y", function(d) { return y(d.count) -10; })
+      .attr("dy", ".75em")
+      .text(function(d) { return d.count; });
+*/  
+  chart.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate("+margin.left+","+ height+")")        
+        .call(xAxis);
+  
+  chart.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate("+margin.left+",0)")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Count");
+});
+
+function type(d) {
+    d.tag = +d.tag; // coerce to number
+    return d;
+  }
+
+</script>
+</body>
+</html>

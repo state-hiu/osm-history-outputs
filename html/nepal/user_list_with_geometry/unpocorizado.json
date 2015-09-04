@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":[{"building":"yes"},{"source":"NextView"}],"geometry":{"type":"LineString","coordinates":[["85.3496718","27.744021"],["85.3497621","27.7440008"],["85.3497147","27.7439047"],["85.3496343","27.7439355"],["85.3496718","27.744021"]]}}]}
